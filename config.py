@@ -19,6 +19,9 @@ else:
 MEDIA_DIR = os.path.join(os.path.dirname(__file__), "media")
 os.makedirs(MEDIA_DIR, exist_ok=True)
 
+EXPORTS_DIR = os.path.join(os.path.dirname(__file__), "exports")
+os.makedirs(EXPORTS_DIR, exist_ok=True)
+
 if not BOT_TOKEN:
     raise ValueError("❌ Добавь BOT_TOKEN в .env!")
 if not ADMIN_IDS:

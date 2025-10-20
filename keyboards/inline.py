@@ -13,7 +13,8 @@ def get_admin_menu():
     builder = InlineKeyboardBuilder()
     builder.button(text="📥 Ishlanmagan", callback_data="unprocessed")
     builder.button(text="📤 Ishlangan", callback_data="processed")
-    builder.button(text="👥 Adminlarni boshqarish", callback_data="manage_admins")
+    builder.button(text="📊 Statistika eksport", callback_data="export_stats")
+    builder.button(text="� Adminlarni boshqarish", callback_data="manage_admins")
     builder.adjust(1)
     return builder.as_markup()
 

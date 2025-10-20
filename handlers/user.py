@@ -79,7 +79,7 @@ async def process_address(message: Message, state: FSMContext):
         return
     await state.update_data(address=message.text.strip())
     await state.set_state(AppealForm.domkom)
-    await message.answer("4-qadam: Uy MFI/OFI kompaniyasini kiriting.", reply_markup=get_back_cancel_keyboard())
+    await message.answer("4-qadam: Uy MFY/OFY kiriting.", reply_markup=get_back_cancel_keyboard())
 
 @router.message(AppealForm.domkom)
 async def process_domkom(message: Message, state: FSMContext):
@@ -88,7 +88,7 @@ async def process_domkom(message: Message, state: FSMContext):
         return
     await state.update_data(domkom=message.text.strip())
     await state.set_state(AppealForm.text)
-    await message.answer("5-qadam: Murojaatingizni tasvirlab bering.", reply_markup=get_back_cancel_keyboard())
+    await message.answer("5-qadam: Murojaatingiz.", reply_markup=get_back_cancel_keyboard())
 
 @router.message(AppealForm.text)
 async def process_text(message: Message, state: FSMContext):
@@ -144,7 +144,7 @@ async def finish_media(message: Message, state: FSMContext):
 📱 Telefon: <b>{data['phone']}</b>
 👤 F.I.O.: <b>{data['full_name']}</b>
 🏠 Manzil: <b>{data['address']}</b>
-🏢 Uy MFI/OFI: <b>{data['domkom']}</b>
+🏢 Uy MFY/OFY: <b>{data['domkom']}</b>
 📝 Matn: <b>{data['text'][:100]}...</b>
 📸 Fayllar: <b>{len(data.get('media_files', []))}</b>
 
@@ -166,7 +166,7 @@ async def go_back(message: Message, state: FSMContext):
         await message.answer("3-qadam: Manzilni kiriting.", reply_markup=get_back_cancel_keyboard())
     elif current == AppealForm.text:
         await state.set_state(AppealForm.domkom)
-        await message.answer("4-qadam: Uy MFI/OFI kiriting.", reply_markup=get_back_cancel_keyboard())
+        await message.answer("4-qadam: Uy MFY/OFY kiriting.", reply_markup=get_back_cancel_keyboard())
     elif current == AppealForm.media:
         await state.set_state(AppealForm.text)
         await message.answer("5-qadam: Murojaatni tasvirlang.", reply_markup=get_back_cancel_keyboard())

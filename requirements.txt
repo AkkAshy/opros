@@ -3,3 +3,4 @@ pydantic==2.10.6   # ← ФИКС! Совместимая версия с aiogra
 python-dotenv==1.0.1
 aiosqlite==0.20.0
 aiofiles==23.2.1
+openpyxl==3.1.2    # Для экспорта статистики в Excel

@@ -1,3 +1,4 @@
+import os
 from aiogram import Router, F, Bot
 from aiogram.types import Message, CallbackQuery, FSInputFile, InaccessibleMessage
 from aiogram.filters import Command
@@ -6,6 +7,7 @@ from database.db import is_admin, get_appeals, get_total_pages, get_appeal, proc
 from keyboards.inline import get_admin_menu, get_appeals_list_buttons, get_appeal_actions, get_admin_management_menu
 from states.appeal import AdminForm
 from utils.notifications import notify_admins, notify_user
+from utils.statistics import create_excel_export_async
 
 router = Router()
 
@@ -188,6 +190,24 @@ async def list_admins(callback: CallbackQuery):
     await callback.message.edit_text(text, reply_markup=get_admin_management_menu())
     await callback.answer()
 
+@router.message(Command("export"))
+async def export_command(message: Message):
+    if not await check_admin(message):
+        return
+
+    await message.answer("📊 Eksport tayyorlanmoqda...")
+
+    try:
+        filepath = await create_excel_export_async()
+        filename = os.path.basename(filepath)
+
+        await message.answer_document(
+            FSInputFile(filepath),
+            caption=f"📊 Statistika fayli: {filename}"
+        )
+    except Exception as e:
+        await message.answer(f"❌ Xatolik: {e}")
+
 @router.message(F.text == "👑 Admin panel")
 async def admin_panel_button(message: Message):
     if not await check_admin(message):
@@ -233,6 +253,28 @@ async def add_comment_process(message: Message, state: FSMContext, bot: Bot):
     await notify_user(bot, appeal['user_id'], f"Sizning murojaatingiz №{appeal_id} ko'rib chiqish uchun qabul qilindi." + (f"\nIzoh: {comment}" if comment else ""))
     await message.answer("Izoh qo'shildi va murojaat ishlandi!")
     await state.clear()
+
+@router.callback_query(F.data == "export_stats")
+async def export_statistics(callback: CallbackQuery):
+    if callback.message is None or isinstance(callback.message, InaccessibleMessage):
+        await callback.answer("❌ Xabar topilmadi.")
+        return
+
+    await callback.message.edit_text("📊 Eksport tayyorlanmoqda...")
+
+    try:
+        filepath = await create_excel_export_async()
+        filename = os.path.basename(filepath)
+
+        await callback.message.answer_document(
+            FSInputFile(filepath),
+            caption=f"📊 Statistika fayli: {filename}"
+        )
+        await callback.message.edit_text("✅ Eksport muvaffaqiyatli yakunlandi!", reply_markup=get_admin_menu())
+    except Exception as e:
+        await callback.message.edit_text(f"❌ Xatolik: {e}", reply_markup=get_admin_menu())
+
+    await callback.answer()
 
 @router.callback_query(F.data == "back_to_list")
 async def back_to_list(callback: CallbackQuery, state: FSMContext):
